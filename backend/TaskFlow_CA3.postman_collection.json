@@ -1,0 +1,251 @@
+{
+  "info": {
+    "name": "TaskFlow API — CA3",
+    "description": "Complete Postman collection for TaskFlow backend (CAP646 CA3).\n\nSetup:\n1. Set base_url variable to http://localhost:5000\n2. After login, copy the token and set it as the 'token' variable\n3. Run requests in the order listed below",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5001", "type": "string" },
+    { "key": "token",    "value": "",                      "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane@test.com\",\n  \"password\": \"jane1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2. Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@test.com\",\n  \"password\": \"jane1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/auth/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "4. Login — Wrong Password (expect 401)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@test.com\",\n  \"password\": \"wrongpassword\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "5. Create Project",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/projects",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Website Redesign\",\n  \"description\": \"Revamp the company website\",\n  \"color\": \"#6c63ff\",\n  \"icon\": \"🎨\"\n}"
+            }
+          }
+        },
+        {
+          "name": "6. Get All Projects",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/projects",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "7. Get Project by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/projects/PROJECT_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "8. Update Project",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/projects/PROJECT_ID_HERE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Website Redesign v2\",\n  \"color\": \"#22d3ee\"\n}"
+            }
+          }
+        },
+        {
+          "name": "9. Delete Project",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/projects/PROJECT_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "10. Get Projects — No Token (expect 401)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/projects"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "11. Create Task (JSON, no file)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/tasks",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Design homepage mockup\",\n  \"description\": \"Create Figma wireframes for the new homepage\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2025-01-15\",\n  \"project\": \"PROJECT_ID_HERE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "12. Create Task WITH File Upload",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/tasks",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title",       "value": "Task with attachment",  "type": "text" },
+                { "key": "description", "value": "This task has a file",  "type": "text" },
+                { "key": "status",      "value": "todo",                  "type": "text" },
+                { "key": "priority",    "value": "medium",                "type": "text" },
+                { "key": "dueDate",     "value": "2025-02-01",            "type": "text" },
+                { "key": "attachment",  "src": "",                        "type": "file" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. Get All Tasks",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tasks",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "14. Get Tasks — Filter by Status",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tasks?status=todo",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "15. Get Tasks — Filter by Priority",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tasks?priority=high",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "16. Get Task by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tasks/TASK_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "17. Update Task",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/tasks/TASK_ID_HERE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"inprogress\",\n  \"priority\": \"high\"\n}"
+            }
+          }
+        },
+        {
+          "name": "18. Delete Task",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/tasks/TASK_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "19. Get Non-existent Task (expect 404)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/tasks/000000000000000000000000",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Cases",
+      "item": [
+        {
+          "name": "20. Register — Missing Fields (expect 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"missing@fields.com\"\n}" }
+          }
+        },
+        {
+          "name": "21. Unknown Route (expect 404)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/unknown-route"
+          }
+        }
+      ]
+    }
+  ]
+}
